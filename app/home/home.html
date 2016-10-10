@@ -1,0 +1,128 @@
+
+<div class="container" ng-show="isInProgress">
+    <md-progress-linear md-mode="query" ng-disabled="false"></md-progress-linear>
+</div>
+<section class="demo-container md-whiteframe-z1">
+    <md-toolbar class="demo-toolbar md-primary">
+        <div class="md-toolbar-tools">
+            <h3>My Place: {{myPlace}}</h3>
+            <span flex> </span>
+            <md-button
+                    class="md-icon-button md-ink-ripple md-fab md-button"
+                    aria-label="View Source"
+                    ng-class="{ active: isSettingsOpened }"
+                    ng-click="isSettingsOpened = !isSettingsOpened">
+                <md-tooltip md-autohide>Location</md-tooltip>
+                <md-icon md-svg-src="img/ic_location_on_black_24px.svg"></md-icon>
+            </md-button>
+        </div>
+    </md-toolbar>
+    <md-content md-scroll-y class="demo-source-container animate-show" ng-show="isSettingsOpened">
+        <div layout="column" ng-cloak class="md-inline-form">
+            <md-content md-theme="docs-dark" layout-gt-sm="row">
+                <md-input-container class="md-block" flex-gt-sm>
+                    <label>Try to find your address</label>
+                    <form>
+                        <input vs-google-autocomplete
+                               ng-model="address.name"
+                               vs-place="address.place"
+                               vs-place-id="address.components.placeId"
+                               vs-street-number="address.components.streetNumber"
+                               vs-street="address.components.street"
+                               vs-city="address.components.city"
+                               vs-state="address.components.state"
+                               vs-country-short="address.components.countryCode"
+                               vs-country="address.components.country"
+                               vs-post-code="address.components.postCode"
+                               vs-district="address.components.district"
+                               vs-latitude="address.components.location.lat"
+                               vs-longitude="address.components.location.long"
+                               type="text"
+                               name="address"
+                               id="address"
+                               class="form-control"
+                               placeholder="">
+                    </form>
+                </md-input-container>
+            </md-content>
+            <md-content layout-gt-sm="row" md-theme="docs-dark">
+                <md-input-container class="md-block" flex-gt-sm>
+                    <label>Or just enter it manually:</label><br>
+                </md-input-container>
+            </md-content>
+            <md-content md-theme="docs-dark" layout-gt-sm="row">
+                <md-input-container class="md-block" flex-gt-sm>
+                    <label>City</label>
+                    <input ng-model="address.components.city">
+                </md-input-container>
+
+                <md-input-container class="md-block" flex-gt-sm>
+                    <label>County</label>
+                    <md-select name="countryInput" ng-model="address.components.countryCode" required>
+                        <md-option ng-repeat="state in states"  value="{{state.Code}}">
+                            {{state.Name}}
+                        </md-option>
+                    </md-select>
+                    <div ng-messages="countryInput.$error" role="alert" multiple>
+                        <div ng-message="required" class="my-message">You must supply a country.</div>
+                    </div>
+                </md-input-container>
+
+                <md-input-container class="md-block" flex-gt-sm>
+                    <label>Postal Code</label>
+                    <input name="postalCode" ng-model="address.components.postCode">
+                </md-input-container>
+
+
+            </md-content>
+            <md-content layout="row" md-theme="docs-dark" layout-align="end center">
+
+                <md-button class="md-raised md-primary" layout-align="end center" ng-click="clearAddress()">Clear
+                    selection
+                </md-button>
+                <md-button class="md-accent md-raised md-hue-2 md-button md-ink-ripple"
+                          layout-align="end center" ng-disabled="address.components.countryCode=='' || (address.components.countryCode!=''&&address.components.city ==''&& address.components.postCode=='')"
+                           ng-click="showWeather()">Show weather
+                </md-button>
+            </md-content>
+        </div>
+    </md-content>
+</section>
+<md-card md-theme="docs-dark" md-theme-watch ng-show="isWeatherAvailable">
+    <md-card-title>
+        <md-card-title-text>
+            <span class="md-headline">My Weather</span>
+            <span class="md-subhead">{{date | date:'dd-MMM-yyyy HH:mm'}}</span>
+        </md-card-title-text>
+        <md-card-content layout="row" layout-align="space-between">
+            <md-card-actions layout="column">
+                <md-button class="md-icon my-icon-button" aria-label="wetherIcon"  style="text-align:left!important;">
+                    <img ng-src="http://openweathermap.org/img/w/{{myWeather.weather[0].icon}}.png">
+                    <span>{{myWeather.weather[0].description}}</span>
+                    <md-tooltip md-autohide>Weather description</md-tooltip>
+                </md-button>
+                <md-button  class="md-icon my-icon-button" aria-label="temperature"  style="text-align:left!important;">
+                    <md-icon md-svg-icon="img/thermometer.svg" style="font-size: 50px; height: 50px; "></md-icon>
+                    <span >{{myWeather.main.temp}} &deg;C</span>
+                    <md-tooltip md-autohide>Temperature</md-tooltip>
+                </md-button>
+                <md-button  class="md-icon my-icon-button" aria-label="humidity"  style="text-align:left!important;">
+                    <md-icon md-svg-icon="img/windy.svg" style="font-size: 50px; height: 50px; "></md-icon>
+                    <span >{{myWeather.wind.speed}} m/s ; {{ myWeather.wind.deg| DegToDir}} </span>
+                    <md-tooltip md-autohide>Wind</md-tooltip>
+                </md-button>
+                <md-button  class="md-icon my-icon-button" aria-label="humidity"  style="text-align:left!important;">
+                    <md-icon md-svg-icon="img/pressure.svg" style="font-size: 50px; height: 50px; "></md-icon>
+                    <span >{{myWeather.main.pressure}} hPa</span>
+                    <md-tooltip md-autohide>Pressure</md-tooltip>
+                </md-button>
+                <md-button  class="md-icon my-icon-button" aria-label="humidity"  style="text-align:left!important;">
+                    <md-icon md-svg-icon="img/rain.svg" style="font-size: 50px; height: 50px; "></md-icon>
+                    <span >{{myWeather.main.humidity}} %</span>
+                    <md-tooltip md-autohide>Humidity</md-tooltip>
+                </md-button>
+            </md-card-actions>
+
+        </md-card-content>
+    </md-card-title>
+</md-card>
